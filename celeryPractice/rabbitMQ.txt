@@ -1,0 +1,4 @@
+Monitoring rabbit mq: 
+	http://localhost:15672
+
+

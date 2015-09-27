@@ -1,0 +1,10 @@
+> List queues: 
+	sudo rabbitmqctl list_queues
+> Check details of queue 
+	rabbitmqctl list_queues name messages messages_ready messages_unacknowledged
+> Finding the number of workers currently consuming from a queue:
+	rabbitmqctl list_queues name consumers
+> Finding the amount of memory allocated to a queue:
+	rabbitmqctl list_queues name memory
+
+

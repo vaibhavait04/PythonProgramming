@@ -1,0 +1,51 @@
+
+a) Configure workers 
+	celery -A tasks worker --loglevel=info
+b) Run celery process which runs on workers 
+	app = Celery('tasks', backend='redis://localhost', broker='amqp://')
+	result = add.delay(4, 4)
+	result.ready()
+	result.get()
+Avoid exception from get: 
+	result.get(propagate=False)
+Get stack trace: 
+	result.traceback
+
+Celery task tracking 
+=========================
+> Check the task result: Get the event ID from celery worker STDOUT 
+	celery -A proj result -t tasks.add 4e196aa4-0141-4601-8138-7aa33db0f577
+> Purge old messages 
+	celery -A proj purge
+> Check app tasks status 
+	celery -A tasks status 
+> Check active tasks 
+	celery -A proj inspect active
+> Check the scheduled tasks 
+	celery -A proj inspect scheduled
+> Worker statistics 
+	celery -A proj inspect stats
+> Registered tasks 
+	celery -A proj inspect registered
+> Reserved tasks 
+	celery -A proj inspect reserved
+> Revoked tasks 
+	celery -A proj inspect revoked
+> Migrate from redis to amqp (experimental) 
+	celery -A proj migrate redis://localhost amqp://localhost
+> Enable and disable events 
+	celery -A proj control enable_events
+	celery -A proj control disable_events
+
+Monitoring Steps: 
+=================
+> Dump events to stdout 
+	celery -A proj events --dump
+> Command line monitoring 
+	celery -A proj events
+> Run GUI to check the status  -- http://localhost:5555/dashboard
+	celery -A proj flower --port=5555
+	celery flower 
+	$ celery flower --broker=amqp://guest:guest@localhost:5672//
+	$ celery flower --broker=redis://guest:guest@localhost:6379/0
+
