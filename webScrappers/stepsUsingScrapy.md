@@ -8,52 +8,53 @@
 *	Item Loaders - container loaders 
 *	Spiders - classes to scrape information - scrapy.Spider
 *		Need to define attributes (base:scrapy.Spider) 
-			name - scraper name
-			start_urls [url1,url2 ]  - to scrape
-			allowed_domains [] - list of domains to allow 
-			parse(self, response) - how to parse the response 
+		>	name - scraper name
+		>	start_urls [url1,url2 ]  - to scrape
+		>	allowed_domains [] - list of domains to allow 
+		>	parse(self, response) - how to parse the response 
 *	Response object (spider.http.Respose) - created by Spider response 
 *	Selectors - XPath xpath('path') , CSS css('element'), Extract/extract(), re('regex') selectors 
 
 *	Shell mode - using ipython notebook 
 		scrapy shell "http://www.dmoz.org/Computers/Programming/Languages/Python/Books/"
 			'response' variable will have all the data 
-			response.xpath('//title') , response.xpath('//title/text()').extract() 
-			response.xpath('//title').re('(\w+)')  
-			response.css(), response
-			for sel in response.xpath('//ul/li'):
-				title = sel.xpath('a/text()').extract()
-				link = sel.xpath('a/@href').extract()
-				desc = sel.xpath('text()').extract()
-				print title, link, desc
+	>		response.xpath('//title') , response.xpath('//title/text()').extract() 
+	>		response.xpath('//title').re('(\w+)')  
+	>		response.css(), response
+	>		for sel in response.xpath('//ul/li'):
+	>			title = sel.xpath('a/text()').extract()
+	>			link = sel.xpath('a/@href').extract()
+	>			desc = sel.xpath('text()').extract()
+	>			print title, link, desc
 	
 * Run Project: enter the spider to run dmoz_spider.py 
-	scrapy crawl dmoz
+	> scrapy crawl dmoz
 
 * FolderStructure: 
-./tutorial/tutorial/__init__.py
-./tutorial/tutorial/pipelines.py
-./tutorial/scrapy.cfg
+> ./tutorial/tutorial/__init__.py
+> ./tutorial/tutorial/pipelines.py
+> ./tutorial/scrapy.cfg
 
-./tutorial/tutorial/settings.py
+> ./tutorial/tutorial/settings.py
 
-./tutorial/tutorial/items.py
-	Example1: 
+> ./tutorial/tutorial/items.py
+*	Example1: 
 	class DmozItem(scrapy.Item):
 		title = scrapy.Field()
 		link = scrapy.Field()
 		desc = scrapy.Field()
-	Example2: 
+*	Example2: 
 	from scrapy.item import Item, Field
 	class StackItem(Item):
 	    title = Field()
 	    url = Field()
 
 
-./tutorial/tutorial/spiders/__init__.py
-./tutorial/tutorial/spiders/dmoz_spider.py 
+> ./tutorial/tutorial/spiders/__init__.py
+> ./tutorial/tutorial/spiders/dmoz_spider.py 
 
 * Spider Example 1: 
+
 	import scrapy
 
 	class DmozSpider(scrapy.Spider):
@@ -70,6 +71,7 @@
 		    f.write(response.body)
 
 * Spider Example 2: 
+
 	from scrapy import Spider
 	from scrapy.selector import Selector
 	from stack.items import StackItem
@@ -94,6 +96,7 @@
 		    yield item
 
 * DMOZ to follow links as well: 
+
 	import scrapy
 
 	from tutorial.items import DmozItem
@@ -134,6 +137,7 @@
 		yield scrapy.Request(url, self.parse_articles_follow_next_page)
 
 * DMOZ - passing additional information to the callbacks - use request.meta['item'] = value 
+
 	def parse_page1(self, response):
 	    item = MyItem()
 	    item['main_url'] = response.url
