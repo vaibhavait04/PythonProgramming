@@ -6,10 +6,18 @@ b) Run celery process which runs on workers
 	result = add.delay(4, 4)
 	result.ready()
 	result.get()
-Avoid exception from get: 
+c) Avoid exception from get: 
 	result.get(propagate=False)
-Get stack trace: 
+	Check using: result.failed(), result.successful(), result.state, 
+d) Get stack trace: 
 	result.traceback
+e) Specifying a queue 
+	Delayed processing using queue 'lopri' with 10 sec delay: 
+		>>> add.apply_async((2, 2), queue='lopri', countdown=10)
+	Worker will run on queue as : 
+		$ celery -A proj worker -Q hipri
+	Equal weight to two queues: 
+		$ celery -A proj worker -Q hipri,celery
 
 Celery task tracking 
 =========================
@@ -48,4 +56,32 @@ Monitoring Steps:
 	celery flower 
 	$ celery flower --broker=amqp://guest:guest@localhost:5672//
 	$ celery flower --broker=redis://guest:guest@localhost:6379/0
+
+Demonizing
+================
+The daemonization scripts uses the celery multi command to start one or more workers in the background:
+	$ celery multi start w1 -A proj -l info
+	celery multi v3.1.1 (Cipater)
+	> Starting nodes...
+	    > w1.halcyon.local: OK
+
+Restart demon:
+
+	$ celery  multi restart w1 -A proj -l info
+	celery multi v3.1.1 (Cipater)
+	> Stopping nodes...
+	    > w1.halcyon.local: TERM -> 64024
+	> Waiting for 1 node.....
+	    > w1.halcyon.local: OK
+	> Restarting node w1.halcyon.local: OK
+	celery multi v3.1.1 (Cipater)
+	> Stopping nodes...
+	    > w1.halcyon.local: TERM -> 64052
+
+Stop demon:
+	$ celery multi stop w1 -A proj -l info
+The stop command is asynchronous so it will not wait for the worker to shutdown. 
+Use stopwait command instead which will ensure all currently executing tasks is completed:
+	$ celery multi stopwait w1 -A proj -l info
+
 
