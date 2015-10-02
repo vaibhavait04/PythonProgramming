@@ -1,18 +1,21 @@
-New project: > scrapy startproject tutorial
+# Scrapy notes 
 
-Terms: 
-	Items - containers - scrapy.Item, scrapy.Field similar to ORM 
-	Item Loaders - container loaders 
-	Spiders - classes to scrape information - scrapy.Spider
-		Need to define attributes (base:scrapy.Spider) 
+## New project
+ > scrapy startproject tutorial
+
+## Terms: 
+*	Items - containers - scrapy.Item, scrapy.Field similar to ORM 
+*	Item Loaders - container loaders 
+*	Spiders - classes to scrape information - scrapy.Spider
+*		Need to define attributes (base:scrapy.Spider) 
 			name - scraper name
 			start_urls [url1,url2 ]  - to scrape
 			allowed_domains [] - list of domains to allow 
 			parse(self, response) - how to parse the response 
-	Response object (spider.http.Respose) - created by Spider response 
-	Selectors - XPath xpath('path') , CSS css('element'), Extract/extract(), re('regex') selectors 
+*	Response object (spider.http.Respose) - created by Spider response 
+*	Selectors - XPath xpath('path') , CSS css('element'), Extract/extract(), re('regex') selectors 
 
-	Shell mode - using ipython notebook 
+*	Shell mode - using ipython notebook 
 		scrapy shell "http://www.dmoz.org/Computers/Programming/Languages/Python/Books/"
 			'response' variable will have all the data 
 			response.xpath('//title') , response.xpath('//title/text()').extract() 
@@ -24,10 +27,10 @@ Terms:
 				desc = sel.xpath('text()').extract()
 				print title, link, desc
 	
-Run Project: enter the spider to run dmoz_spider.py 
+* Run Project: enter the spider to run dmoz_spider.py 
 	scrapy crawl dmoz
 
-FolderStructure: 
+* FolderStructure: 
 ./tutorial/tutorial/__init__.py
 ./tutorial/tutorial/pipelines.py
 ./tutorial/scrapy.cfg
@@ -49,6 +52,7 @@ FolderStructure:
 
 ./tutorial/tutorial/spiders/__init__.py
 ./tutorial/tutorial/spiders/dmoz_spider.py 
+
 * Spider Example 1: 
 	import scrapy
 
