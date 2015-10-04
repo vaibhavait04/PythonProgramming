@@ -14,6 +14,8 @@
 		>	parse(self, response) - how to parse the response 
 *	Response object (spider.http.Respose) - created by Spider response 
 *	Selectors - XPath xpath('path') , CSS css('element'), Extract/extract(), re('regex') selectors 
+*	Pipeline - to process the items - used for DB storage 
+	Sample source code with Pipeline: https://github.com/realpython/stack-spider/releases/tag/v2
 
 *	Shell mode - using ipython notebook 
 		scrapy shell "http://www.dmoz.org/Computers/Programming/Languages/Python/Books/"
@@ -32,11 +34,16 @@
 
 * FolderStructure: 
 > ./tutorial/tutorial/__init__.py
-> ./tutorial/tutorial/pipelines.py
 > ./tutorial/scrapy.cfg
 
 > ./tutorial/tutorial/settings.py
-
+	settings for mongodb: 
+		ITEM_PIPELINES = ['stack.pipelines.MongoDBPipeline', ]
+		MONGODB_SERVER = "localhost"
+		MONGODB_PORT = 27017
+		MONGODB_DB = "stackoverflow"
+		MONGODB_COLLECTION = "questions"
+		DOWNLOAD_DELAY = 5
 > ./tutorial/tutorial/items.py
 *	Example1: 
 	class DmozItem(scrapy.Item):
@@ -150,4 +157,37 @@
 	    item = response.meta['item']   # <<-- 
 	    item['other_url'] = response.url
 	    return item
+
+* Storing to DB - mongodb : Using Pipeline 
+> ./tutorial/tutorial/pipelines.py
+pipeline.py 
+	import pymongo
+
+	from scrapy.conf import settings
+	from scrapy.exceptions import DropItem
+	from scrapy import log
+
+
+	class MongoDBPipeline(object):
+
+	    def __init__(self):
+		connection = pymongo.MongoClient(
+		    settings['MONGODB_SERVER'],
+		    settings['MONGODB_PORT']
+		)
+		db = connection[settings['MONGODB_DB']]
+		self.collection = db[settings['MONGODB_COLLECTION']]
+
+	    def process_item(self, item, spider):
+		valid = True
+		for data in item:
+		    if not data:
+			valid = False
+			raise DropItem("Missing {0}!".format(data))
+		if valid:
+		    self.collection.insert(dict(item))
+		    log.msg("Question added to MongoDB database!",
+			    level=log.DEBUG, spider=spider)
+		return item
+
 
